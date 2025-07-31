@@ -66,7 +66,7 @@ def continuum_reset_2D_params(t: float, C: np.ndarray, K: int, Nx: int, Ny: int,
     #Flatten the derivative matrix to return
     return dCdt.flatten()
 
-def continuum_remain_2D(t: float, C: np.ndarray, K: int, Nx: int, Ny: int, r: float, D: float, dx: float, dy: float):
+def continuum_remain_2D_params(t: float, C: np.ndarray, K: int, Nx: int, Ny: int, r: float, D: float, dx: float, dy: float):
     """
     Continuum limit PDEs for each cell stage and cell total under the remain
     model, but in 2D.
