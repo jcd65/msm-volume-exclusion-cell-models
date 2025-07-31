@@ -19,7 +19,7 @@ def solve_reset_PDE(C0: np.ndarray, t_span: tuple, dt: float, K: int, Nx: int, N
     :param D: Rate of motility
     :param dx: Grid spacing in x-direction
     :param dy: Grid spacing in y-direction
-    :return: Solution array with shape (num_timesteps+1, (K+1)*Nx*Ny)
+    :return: Solution array with shape (K+1, Nx, Ny, num_timesteps+1)
     """
     
     # Define the ODE system using the PDE function
@@ -52,7 +52,7 @@ def solve_remain_PDE(C0: np.ndarray, t_span: tuple, dt: float, K: int, Nx: int, 
     :param D: Rate of motility
     :param dx: Grid spacing in x-direction
     :param dy: Grid spacing in y-direction
-    :return: Solution array with shape (num_timesteps+1, (K+1)*Nx*Ny)
+    :return: Solution array with shape (K+1, Nx, Ny, num_timesteps+1)
     """
     
     # Define the ODE system using the PDE function
