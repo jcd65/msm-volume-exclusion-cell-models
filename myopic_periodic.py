@@ -3,12 +3,14 @@ import random as rand
 
 def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
     """
-    This function diffuses and proliferates particles from t_init to t_final.
-    This is done by generating a time to next rreaction, and choosing a reaction as in the Gillespie algorithm.
+    This function moves and proliferates cells from t_init to t_final according to the methods described in the paper.
+    This is done by generating a time to next reaction, and choosing a reaction as in the Gillespie algorithm.
     If a particle fails to proliferate, it is reset to stage k_reset.
-    The lattice and positions are then updated and repeated. 
+    The lattice and positions are then updated acoording to the chosen reaction, and this process repeats
+    until time T_final is reached/exceeded. 
 
     :param init_latt: Initial lattice with particles, array
+    :param init_pos: Initial positions of particles, list
     :param t_init: Initial time, float
     :param t_final: Final time, float
     :param rp: Rate of progression through stages, float
@@ -16,9 +18,9 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
     :param dt: Time step for simulation, float
     :param K: Number of stages, int
     :param k_reset: Stage to reset to if cell proliferation fails, int
-    :return: Updated lattice and positions, and final time, array
+    :return: Updated lattice , final time, array of number of attempted and failed proliferation attempts
     """
-    #Get Lattice dimension
+   #Get Lattice dimension
     Lx, Ly = np.shape(init_latt)
 
     #number of timesteps
@@ -34,6 +36,12 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
 
     #Initialise lattice and positions
     lattice_now = np.copy(init_latt)
+
+    #Initialise failed proliferation and proliferation attempts counter
+    num_failed_prolif_events = 0
+    num_prolif_events = 0
+    failed_prolifs_array = np.zeros(num_timesteps+1)
+    prolif_attempts_array = np.zeros(num_timesteps+1)
 
     #Initialise propensities (K+1 of them as there is propoensity for movement as well)
     a = np.zeros(2)
@@ -119,6 +127,9 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
 
             #Otherwise attempt proliferation
             else:
+                #Increment proliferation attempts counter
+                num_prolif_events += 1
+
                 #Attempt proliferation
                 success = False
 
@@ -172,8 +183,9 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
                     a[0] += rm
                     a[1] += rp
                 else:
-                    #If proliferation fails, reset to stage k_reset
+                    #If proliferation fails, reset to stage k_reset, increment failed attempts counter
                     lattice_now[x_idx, y_idx] = k_reset
+                    num_failed_prolif_events += 1
 
         #Update time
         t_now += tau
@@ -189,6 +201,8 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
         if steps_to_write > 0 and steps_to_write != float('inf'):
             for i in range(ind_before, ind_after + 1):
                 lattices[i,:,:] = np.copy(lattice_now)
+                failed_prolifs_array[i] = num_failed_prolif_events
+                prolif_attempts_array[i] = num_prolif_events
 
         #break if lattice is full
         if a[0]/rm >= Lx*Ly:
@@ -196,4 +210,4 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
             for i in range(ind_after, num_timesteps + 1):
                 lattices[i,:,:] = np.copy(lattice_now)
             break
-    return lattices, t_now
+    return lattices, t_now, failed_prolifs_array, prolif_attempts_array
