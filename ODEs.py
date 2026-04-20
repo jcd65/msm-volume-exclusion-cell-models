@@ -1,8 +1,6 @@
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.cm import get_cmap
 from scipy.integrate import solve_ivp
 
 def myopic_exp(t,C, rProlif):
