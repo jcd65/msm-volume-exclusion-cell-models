@@ -5,6 +5,7 @@ def simulate_myopic_prolif_new(init_latt,t_init,t_final,dt,rp,rm,K,k_reset):
     """
     This function moves and proliferates cells from t_init to t_final according to the methods described in the paper.
     This is done by generating a time to next reaction, and choosing a reaction as in the Gillespie algorithm.
+    When a cell chooses to proliferate, it will choose (uniformly at random) between empty sites if there are any available.
     If a particle fails to proliferate, it is reset to stage k_reset.
     The lattice and positions are then updated acoording to the chosen reaction, and this process repeats
     until time T_final is reached/exceeded. 
